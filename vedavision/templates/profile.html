@@ -1,0 +1,347 @@
+{% extends "base.html" %}
+
+{% block title %}My Profile - VedaVision{% endblock %}
+
+{% block extra_css %}
+<style>
+.profile-hero {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 60px 0 40px;
+    color: white;
+    text-align: center;
+}
+
+.profile-hero h1 {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+}
+
+.profile-content {
+    max-width: 800px;
+    margin: -30px auto 60px;
+    padding: 0 20px;
+}
+
+.profile-card {
+    background: white;
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+    margin-bottom: 30px;
+}
+
+.profile-header {
+    text-align: center;
+    margin-bottom: 40px;
+    padding-bottom: 30px;
+    border-bottom: 2px solid #f0f0f0;
+}
+
+.profile-avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    font-size: 3rem;
+    color: white;
+}
+
+.profile-name {
+    font-size: 1.8rem;
+    color: var(--dark);
+    margin-bottom: 5px;
+}
+
+.profile-email {
+    color: #666;
+    font-size: 1.1rem;
+}
+
+.profile-meta {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    margin-top: 15px;
+    flex-wrap: wrap;
+}
+
+.meta-item {
+    color: #999;
+    font-size: 0.9rem;
+}
+
+.form-section {
+    margin-bottom: 30px;
+}
+
+.form-section h3 {
+    color: var(--dark);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    color: var(--dark);
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 12px 15px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.3s;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 100px;
+    font-family: inherit;
+}
+
+.form-group small {
+    display: block;
+    color: #999;
+    margin-top: 5px;
+    font-size: 0.85rem;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.btn-submit {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 14px 32px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.btn-submit:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+}
+
+.btn-cancel {
+    background: white;
+    color: var(--primary);
+    padding: 14px 32px;
+    border: 2px solid var(--primary);
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.3s;
+    margin-left: 15px;
+}
+
+.btn-cancel:hover {
+    background: #f8f9fa;
+}
+
+.account-info {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 30px;
+}
+
+.account-info h4 {
+    color: var(--dark);
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.info-grid {
+    display: grid;
+    gap: 10px;
+}
+
+.info-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.info-item:last-child {
+    border-bottom: none;
+}
+
+.info-label {
+    color: #666;
+    font-weight: 600;
+}
+
+.info-value {
+    color: var(--dark);
+}
+
+@media (max-width: 768px) {
+    .profile-card {
+        padding: 25px;
+    }
+    
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+    
+    .btn-cancel {
+        margin-left: 0;
+        margin-top: 10px;
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .btn-submit {
+        width: 100%;
+        justify-content: center;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="profile-hero">
+    <div class="container">
+        <h1>My Profile</h1>
+        <p>Manage your account and preferences</p>
+    </div>
+</div>
+
+<div class="profile-content">
+    <div class="profile-card">
+        <!-- Profile Header -->
+        <div class="profile-header">
+            <div class="profile-avatar">
+                <i class="fas fa-user"></i>
+            </div>
+            <div class="profile-name">{{ current_user.full_name or current_user.username }}</div>
+            <div class="profile-email">{{ current_user.email }}</div>
+            <div class="profile-meta">
+                <div class="meta-item">
+                    <i class="fas fa-calendar"></i> Member since {{ current_user.created_at.strftime('%B %Y') }}
+                </div>
+                {% if current_user.last_login %}
+                <div class="meta-item">
+                    <i class="fas fa-clock"></i> Last login: {{ current_user.last_login.strftime('%b %d, %Y') }}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Account Information -->
+        <div class="account-info">
+            <h4>
+                <i class="fas fa-info-circle"></i>
+                Account Information
+            </h4>
+            <div class="info-grid">
+                <div class="info-item">
+                    <span class="info-label">Username:</span>
+                    <span class="info-value">{{ current_user.username }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Email:</span>
+                    <span class="info-value">{{ current_user.email }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Experience Level:</span>
+                    <span class="info-value">{{ current_user.experience_level or 'Not set' }}</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Edit Profile Form -->
+        <div class="form-section">
+            <h3>
+                <i class="fas fa-edit"></i>
+                Edit Profile
+            </h3>
+            
+            <form method="POST" action="{{ url_for('profile') }}">
+                <div class="form-group">
+                    <label for="full_name">Full Name</label>
+                    <input 
+                        type="text" 
+                        id="full_name" 
+                        name="full_name" 
+                        value="{{ current_user.full_name or '' }}"
+                        placeholder="Enter your full name"
+                    >
+                    <small>This name will be displayed on your dashboard</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="experience_level">Experience Level</label>
+                    <select id="experience_level" name="experience_level">
+                        <option value="Beginner" {% if current_user.experience_level == 'Beginner' %}selected{% endif %}>Beginner - New to yoga</option>
+                        <option value="Intermediate" {% if current_user.experience_level == 'Intermediate' %}selected{% endif %}>Intermediate - Regular practice</option>
+                        <option value="Advanced" {% if current_user.experience_level == 'Advanced' %}selected{% endif %}>Advanced - Experienced yogi</option>
+                    </select>
+                    <small>Help us personalize your yoga routines</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="goals">Your Goals</label>
+                    <textarea 
+                        id="goals" 
+                        name="goals" 
+                        placeholder="What would you like to achieve with yoga? (e.g., flexibility, stress relief, strength)"
+                    >{{ current_user.goals or '' }}</textarea>
+                    <small>Share your yoga journey goals with us</small>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="submit" class="btn-submit">
+                        <i class="fas fa-save"></i>
+                        Save Changes
+                    </button>
+                    <a href="{{ url_for('dashboard') }}" class="btn-cancel">
+                        <i class="fas fa-times"></i>
+                        Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

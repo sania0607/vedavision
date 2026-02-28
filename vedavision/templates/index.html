@@ -1,0 +1,334 @@
+{% extends "base.html" %}
+
+{% block title %}VedaVision - AI-Powered Yoga Wellness Platform{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero">
+    <div class="hero-overlay"></div>
+    <div class="container">
+        <div class="hero-content">
+            <div class="hero-text">
+                <h1 class="hero-title">
+                    <span class="gradient-text">Transform Your Yoga Practice</span>
+                    <br>with AI Precision
+                </h1>
+                <p class="hero-subtitle">
+                    Experience the perfect blend of ancient yoga wisdom and cutting-edge AI technology. 
+                    Get real-time posture corrections, personalized feedback, and track your progress like never before.
+                </p>
+                <div class="hero-buttons">
+                    <a href="{{ url_for('coach') }}" class="btn btn-primary btn-large">
+                        <i class="fas fa-play-circle"></i> Start Free Practice
+                    </a>
+                    <a href="{{ url_for('features') }}" class="btn btn-secondary btn-large">
+                        <i class="fas fa-info-circle"></i> Learn More
+                    </a>
+                </div>
+                
+                <div class="hero-stats">
+                    <div class="stat-item">
+                        <i class="fas fa-brain"></i>
+                        <div>
+                            <h3>AI-Powered</h3>
+                            <p>Smart Coaching</p>
+                        </div>
+                    </div>
+                    <div class="stat-item">
+                        <i class="fas fa-cube"></i>
+                        <div>
+                            <h3>Accurate</h3>
+                            <p>98% Precision</p>
+                        </div>
+                    </div>
+                    <div class="stat-item">
+                        <i class="fas fa-chart-line"></i>
+                        <div>
+                            <h3>Real-time</h3>
+                            <p>Instant Feedback</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="hero-image">
+                <div class="hero-illustration">
+                    <img src="{{ url_for('static', filename='yoga_img.svg') }}" alt="Yoga Pose" class="yoga-figure">
+                    <div class="lotus-logo">
+                        <i class="fas fa-spa"></i>
+                        <span>VedaVision</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Overview -->
+<section class="features-overview">
+    <div class="container">
+        <div class="section-header">
+            <h2>Why Choose <span class="gradient-text">VedaVision</span>?</h2>
+            <p>Advanced technology meets ancient wisdom for the perfect yoga experience</p>
+        </div>
+        
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <h3>AI-Powered Analysis</h3>
+                <p>Advanced AI technology analyzes your body position in real-time, providing professional-level guidance with exceptional precision.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-cube"></i>
+                </div>
+                <h3>Smart Tracking</h3>
+                <p>Intelligent tracking system understands your body in three dimensions, ensuring accurate feedback from any camera angle.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-bullseye"></i>
+                </div>
+                <h3>Real-Time Feedback</h3>
+                <p>Instant corrections and suggestions help you perfect your form with every breath and movement.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h3>Progress Tracking</h3>
+                <p>Monitor your improvement over time with detailed analytics, score history, and achievement milestones.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-filter"></i>
+                </div>
+                <h3>Smooth Performance</h3>
+                <p>Advanced smoothing technology eliminates jitter and provides stable, reliable feedback throughout your practice.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-palette"></i>
+                </div>
+                <h3>Beautiful UI</h3>
+                <p>Modern, intuitive interface with gradient themes and visual feedback makes practice enjoyable.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Yoga Poses -->
+<section class="poses-section">
+    <div class="container">
+        <div class="section-header">
+            <h2>Master <span class="gradient-text">5 Classic Poses</span></h2>
+            <p>Start with fundamental asanas and build your foundation</p>
+        </div>
+        
+        <div class="poses-grid">
+            <div class="pose-card">
+                <div class="pose-number">1</div>
+                <i class="fas fa-tree pose-icon"></i>
+                <h3>Tree Pose</h3>
+                <p class="sanskrit">Vrksasana</p>
+                <ul class="pose-benefits">
+                    <li><i class="fas fa-check"></i> Improves balance</li>
+                    <li><i class="fas fa-check"></i> Strengthens legs</li>
+                    <li><i class="fas fa-check"></i> Enhances focus</li>
+                </ul>
+            </div>
+            
+            <div class="pose-card">
+                <div class="pose-number">2</div>
+                <i class="fas fa-fire pose-icon"></i>
+                <h3>Warrior II</h3>
+                <p class="sanskrit">Virabhadrasana II</p>
+                <ul class="pose-benefits">
+                    <li><i class="fas fa-check"></i> Builds strength</li>
+                    <li><i class="fas fa-check"></i> Opens hips</li>
+                    <li><i class="fas fa-check"></i> Increases stamina</li>
+                </ul>
+            </div>
+            
+            <div class="pose-card">
+                <div class="pose-number">3</div>
+                <i class="fas fa-shapes pose-icon"></i>
+                <h3>Triangle</h3>
+                <p class="sanskrit">Trikonasana</p>
+                <ul class="pose-benefits">
+                    <li><i class="fas fa-check"></i> Stretches sides</li>
+                    <li><i class="fas fa-check"></i> Strengthens legs</li>
+                    <li><i class="fas fa-check"></i> Opens chest</li>
+                </ul>
+            </div>
+            
+            <div class="pose-card">
+                <div class="pose-number">4</div>
+                <i class="fas fa-dog pose-icon"></i>
+                <h3>Downward Dog</h3>
+                <p class="sanskrit">Adho Mukha Svanasana</p>
+                <ul class="pose-benefits">
+                    <li><i class="fas fa-check"></i> Full body stretch</li>
+                    <li><i class="fas fa-check"></i> Energizes body</li>
+                    <li><i class="fas fa-check"></i> Calms mind</li>
+                </ul>
+            </div>
+            
+            <div class="pose-card">
+                <div class="pose-number">5</div>
+                <i class="fas fa-mountain pose-icon"></i>
+                <h3>Mountain</h3>
+                <p class="sanskrit">Tadasana</p>
+                <ul class="pose-benefits">
+                    <li><i class="fas fa-check"></i> Improves posture</li>
+                    <li><i class="fas fa-check"></i> Grounding effect</li>
+                    <li><i class="fas fa-check"></i> Foundation pose</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- How It Works -->
+<section class="how-it-works">
+    <div class="container">
+        <div class="section-header">
+            <h2>How <span class="gradient-text">It Works</span></h2>
+            <p>Get started in 3 simple steps</p>
+        </div>
+        
+        <div class="steps-container">
+            <div class="step">
+                <div class="step-number">01</div>
+                <div class="step-icon">
+                    <i class="fas fa-camera"></i>
+                </div>
+                <h3>Setup Your Camera</h3>
+                <p>Position yourself 6-8 feet from your webcam in a well-lit area. The AI needs to see your full body.</p>
+            </div>
+            
+            <div class="step-connector"></div>
+            
+            <div class="step">
+                <div class="step-number">02</div>
+                <div class="step-icon">
+                    <i class="fas fa-hand-pointer"></i>
+                </div>
+                <h3>Choose Your Pose</h3>
+                <p>Select from 5 classic yoga poses. Each comes with detailed instructions and benefits.</p>
+            </div>
+            
+            <div class="step-connector"></div>
+            
+            <div class="step">
+                <div class="step-number">03</div>
+                <div class="step-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h3>Get Real-Time Feedback</h3>
+                <p>Practice with instant corrections, scoring, and detailed feedback to perfect your form.</p>
+            </div>
+        </div>
+        
+        <div class="cta-box">
+            <h3>Ready to Transform Your Practice?</h3>
+            <p>Join thousands of yogis improving their practice with AI precision</p>
+            <a href="{{ url_for('coach') }}" class="btn btn-primary btn-large">
+                <i class="fas fa-rocket"></i> Start Your Journey
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials -->
+<section class="testimonials">
+    <div class="container">
+        <div class="section-header">
+            <h2>What Our <span class="gradient-text">Community Says</span></h2>
+            <p>Real experiences from real practitioners</p>
+        </div>
+        
+        <div class="testimonials-grid">
+            <div class="testimonial-card">
+                <div class="stars">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                </div>
+                <p>"VedaVision has completely transformed my home practice. The real-time corrections are like having a personal instructor!"</p>
+                <div class="testimonial-author">
+                    <div class="author-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div>
+                        <h4>Sarah Johnson</h4>
+                        <p>Yoga Practitioner, 3 years</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="testimonial-card">
+                <div class="stars">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                </div>
+                <p>"The 3D tracking technology is mind-blowing! It catches mistakes I didn't even know I was making."</p>
+                <div class="testimonial-author">
+                    <div class="author-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div>
+                        <h4>Michael Chen</h4>
+                        <p>Professional Athlete</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="testimonial-card">
+                <div class="stars">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                </div>
+                <p>"As an instructor, I recommend VedaVision to all my students. It's like having me in their home 24/7!"</p>
+                <div class="testimonial-author">
+                    <div class="author-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div>
+                        <h4>Priya Patel</h4>
+                        <p>Certified Yoga Instructor</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="cta-section">
+    <div class="container">
+        <div class="cta-content">
+            <h2>Begin Your Transformation Today</h2>
+            <p>No credit card required. Start practicing in under 60 seconds.</p>
+            <a href="{{ url_for('coach') }}" class="btn btn-light btn-large">
+                <i class="fas fa-spa"></i> Start Free Practice Now
+            </a>
+        </div>
+    </div>
+</section>
+{% endblock %}

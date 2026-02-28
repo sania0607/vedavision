@@ -1,56 +1,69 @@
-# 🧘 VedaVision - AI Yoga Posture Coach
+# 🧘 VedaVision - AI Yoga Wellness Platform
 
-An intelligent yoga posture correction tool that uses computer vision to analyze your yoga poses in real-time and provide instant feedback to help you perfect your form!
+Your personal AI-powered yoga coach that provides real-time posture guidance and personalized practice routines!
 
-## ✨ Features
+## 🌟 Features
 
-- **Real-time Pose Detection**: Uses MediaPipe to track your body movements
-- **5 Classic Yoga Poses**: Support for Tree, Warrior II, Triangle, Downward Dog, and Mountain poses
-- **Instant Feedback**: Get immediate corrections on your posture
-- **Scoring System**: Track your form with a 0-100 score
-- **Visual Guidance**: See your skeleton overlay and alignment in real-time
-- **Easy Controls**: Simple keyboard shortcuts to switch between poses
+- **AI-Powered Coaching**: Advanced pose detection with instant feedback
+- **Personalized Routines**: Get custom yoga sequences based on your goals
+- **Real-time Guidance**: Visual feedback on your posture and form
+- **5 Classic Yoga Poses**: Tree, Warrior II, Triangle, Downward Dog, and Mountain poses
+- **Smart Scoring**: Track your progress with intelligent performance scoring
+- **Beautiful Interface**: Modern, intuitive web design
 
-## 📋 Prerequisites
+## 🚀 Quick Start
 
-- Python 3.8 or higher
-- Webcam
-- Good lighting
-- About 6-8 feet of space in front of your camera
+### Installation
 
-## 🚀 Installation
-
-1. **Clone or navigate to this directory**
+1. **Clone the repository**
    ```bash
-   cd "c:\Users\Sania Rajput\OneDrive\Desktop\vedavision"
+   git clone https://github.com/sania0607/vedavision
+   cd vedavision
    ```
 
-2. **Install required packages**
+2. **Install dependencies**
    ```bash
    pip install -r requirements.txt
    ```
 
-   This will install:
-   - OpenCV (for video processing)
-   - MediaPipe (for pose detection)
-   - NumPy (for calculations)
+3. **Download AI Model**
+   The pose detection model will be downloaded automatically on first run.
 
-## 🎮 How to Use
-
-1. **Start the application**
+4. **Set up API Key**
    ```bash
-   python yoga_coach.py
+   cp .env.example .env
+   # Edit .env and add your Gemini API key
    ```
+   Get your free API key at: https://makersuite.google.com/app/apikey
 
-2. **Select a yoga pose**
-   - Press `1` for Tree Pose
-   - Press `2` for Warrior II
-   - Press `3` for Triangle Pose
-   - Press `4` for Downward Dog
-   - Press `5` for Mountain Pose
+5. **Start the application**
+   ```bash
+   python app.py
+   ```
+   
+6. **Open in browser**
+   Navigate to: http://localhost:5000
 
-3. **Get into the pose**
-   - Make sure your full body is visible in the frame
+## 🎯 How to Use
+
+### Yoga Coach
+1. Click "Start Practice" in the navigation menu
+2. Allow camera access when prompted
+3. Select a yoga pose from the menu
+4. Follow the on-screen guidance
+5. Watch your score improve as you perfect your form!
+
+### Personalized Routines
+1. Click "My Routine" in the navigation menu
+2. Tell us your goals (flexibility, strength, stress relief, etc.)
+3. Select your experience level
+4. Choose your session duration
+5. Let AI create a custom yoga sequence just for you!
+
+## 📋 System Requirements
+
+- Python 3.8 or higher
+- Webcam (for pose detection)
    - Follow the on-screen feedback to correct your posture
    - Watch your score improve as you adjust!
 
@@ -83,91 +96,67 @@ Strong standing pose with arms extended and front knee bent at 90 degrees.
 Side stretch with straight legs and torso tilted to one side.
 
 ### 4. Downward Facing Dog (Adho Mukha Svanasana) 🐕
-Inverted V-shape with hips as the highest point.
+Inverted V-shape with hips as the highest point.- Good lighting
+- 6-8 feet of space in front of camera
 
-### 5. Mountain Pose (Tadasana) ⛰️
-Standing pose with perfect vertical alignment.
+## 🧘 Supported Yoga Poses
 
-See [pose_guide.md](pose_guide.md) for detailed instructions and common mistakes.
+1. **Tree Pose (Vrksasana)** - Balance and focus
+2. **Warrior II (Virabhadrasana II)** - Strength and stability
+3. **Triangle Pose (Trikonasana)** - Flexibility and stretch
+4. **Downward Dog (Adho Mukha Svanasana)** - Full body stretch
+5. **Mountain Pose (Tadasana)** - Foundation and alignment
 
 ## 💡 Tips for Best Results
 
-1. **Lighting**: Practice in a well-lit room (natural light is best)
-2. **Camera Placement**: 
-   - Distance: 6-8 feet away
-   - Height: Chest level
-   - Angle: Straight on (not angled up or down)
-3. **Clothing**: Wear fitted clothing for better body detection
-4. **Background**: Practice against a plain, uncluttered background
-5. **Space**: Ensure you have enough room to move freely
+1. **Lighting**: Practice in a well-lit room
+2. **Camera Distance**: 6-8 feet away at chest level
+3. **Clothing**: Wear fitted clothing for accurate detection
+4. **Background**: Plain, uncluttered background works best
+5. **Space**: Ensure full body is visible in frame
 
-## 🎯 How It Works
+## ⚠️ Safety First
 
-The application uses **MediaPipe Pose**, a machine learning solution that detects 33 body landmarks in real-time. It then:
-
-1. Calculates angles between joints (shoulders, elbows, hips, knees)
-2. Measures distances between body parts
-3. Compares your current pose against ideal yoga pose parameters
-4. Provides specific, actionable feedback
-5. Generates a score based on your alignment
-
-## ⚠️ Important Safety Notes
-
-- This tool is meant to **supplement**, not replace, a qualified yoga instructor
+- This tool supplements, not replaces, professional instruction
 - Always warm up before practicing
 - Listen to your body - never force a pose
-- If you feel pain (not just discomfort), stop immediately
-- Consult with a healthcare provider if you have any injuries or concerns
+- Stop if you feel pain
+- Consult healthcare provider if you have injuries
 
 ## 🛠️ Troubleshooting
 
 **Camera not working?**
-- Check that your webcam is properly connected
-- Ensure no other application is using the camera
-- Try running as administrator
+- Check webcam connection
+- Ensure no other app is using the camera
+- Allow camera permissions in browser
 
-**Pose not being detected?**
-- Make sure your entire body is visible in the frame
-- Improve lighting in your practice area
-- Remove clutter from the background
+**Pose not detected?**
+- Ensure entire body is visible
+- Improve room lighting
+- Remove background clutter
 - Wear contrasting clothing
 
-**App running slowly?**
-- Close other applications to free up resources
-- Reduce video resolution by modifying the code
-- Ensure you have a stable CPU
+## 🤝 Contributing
 
-## 🔧 Customization
+Contributions are welcome! Feel free to:
+- Report bugs
+- Suggest new features
+- Submit pull requests
 
-Want to add your own poses or adjust the thresholds? Check out the `yoga_coach.py` file:
+## 📄 License
 
-- Add new poses in the `poses` dictionary
-- Adjust angle tolerances in the `check_*_pose` methods
-- Modify scoring weights to suit your preferences
+This project is open source and available for personal use.
 
-## 📚 Future Enhancements
-
-Potential features to add:
-- [ ] More yoga poses (Warrior I, Chair, Cobra, etc.)
-- [ ] Session recording and replay
-- [ ] Progress tracking over time
-- [ ] Voice feedback
-- [ ] Mobile app version
-- [ ] Multi-person detection for group classes
-
-## 🙏 Credits
+## 🙏 Acknowledgments
 
 Built with:
-- [MediaPipe](https://mediapipe.dev/) by Google
-- [OpenCV](https://opencv.org/)
-- Lots of ☕ and 🧘
-
-## 📝 License
-
-This project is open source and available for personal use. Feel free to modify and extend it!
+- MediaPipe by Google
+- OpenCV
+- Flask
+- Google Gemini AI
 
 ---
 
-**Namaste! 🙏 Enjoy your practice!**
+**Namaste! 🙏 Start your yoga journey today!**
 
-For questions or suggestions, feel free to reach out or contribute to the project.
+Visit: http://localhost:5000 after running the app

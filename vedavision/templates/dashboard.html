@@ -1,0 +1,279 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - VedaVision{% endblock %}
+
+{% block extra_css %}
+<style>
+.dashboard-hero {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 60px 0 40px;
+    color: white;
+    text-align: center;
+}
+
+.dashboard-hero h1 {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+}
+
+.dashboard-hero p {
+    font-size: 1.2rem;
+    opacity: 0.9;
+}
+
+.dashboard-content {
+    max-width: 1200px;
+    margin: -30px auto 60px;
+    padding: 0 20px;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin-bottom: 40px;
+}
+
+.stat-card {
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+    text-align:center;
+    transition: transform 0.3s;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+}
+
+.stat-icon {
+    font-size: 2.5rem;
+    color: var(--primary);
+    margin-bottom: 15px;
+}
+
+.stat-value {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--dark);
+    margin-bottom: 5px;
+}
+
+.stat-label {
+    color: #666;
+    font-size: 1rem;
+}
+
+.section-title {
+    color: var(--dark);
+    margin-bottom: 25px;
+    font-size: 1.8rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.content-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    margin-bottom: 40px;
+}
+
+.content-card {
+    background: white;
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+}
+
+.session-item, .routine-item {
+    padding: 15px;
+    border-left: 4px solid var(--primary);
+    background: #f8f9fa;
+    margin-bottom: 15px;
+    border-radius: 8px;
+}
+
+.session-item h4, .routine-item h4 {
+    color: var(--primary);
+    margin-bottom: 8px;
+}
+
+.session-meta {
+    color: #666;
+    font-size: 0.9rem;
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: #999;
+}
+
+.empty-state i {
+    font-size: 3rem;
+    margin-bottom: 15px;
+    opacity: 0.5;
+}
+
+.cta-buttons {
+    display: flex;
+    gap: 15px;
+    margin-top: 30px;
+    flex-wrap: wrap;
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+}
+
+.btn-secondary {
+    background: white;
+    color: var(--primary);
+    border: 2px solid var(--primary);
+}
+
+.btn-secondary:hover {
+    background: var(--primary);
+    color: white;
+}
+
+@media (max-width: 768px) {
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .cta-buttons {
+        flex-direction: column;
+    }
+    
+    .btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-hero">
+    <div class="container">
+        <h1>Welcome back, {{ current_user.full_name or current_user.username }}! 🙏</h1>
+        <p>Continue your yoga journey today</p>
+    </div>
+</div>
+
+<div class="dashboard-content">
+    <!-- Stats Grid -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-fire"></i>
+            </div>
+            <div class="stat-value">{{ total_sessions }}</div>
+            <div class="stat-label">Total Sessions</div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i classThe="fas fa-list-check"></i>
+            </div>
+            <div class="stat-value">{{ total_routines }}</div>
+            <div class="stat-label">Saved Routines</div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-chart-line"></i>
+            </div>
+            <div class="stat-value">{{ current_user.experience_level or 'Beginner' }}</div>
+            <div class="stat-label">Experience Level</div>
+        </div>
+    </div>
+    
+    <!-- Recent Activity -->
+    <h2 class="section-title">
+        <i class="fas fa-clock-rotate-left"></i>
+        Recent Sessions
+    </h2>
+    
+    <div class="content-card">
+        {% if recent_sessions %}
+            {% for session in recent_sessions %}
+                <div class="session-item">
+                    <h4>{{ session.pose_name }}</h4>
+                    <div class="session-meta">
+                        <span><i class="fas fa-calendar"></i> {{ session.started_at.strftime('%b %d, %Y') }}</span>
+                        <span><i class="fas fa-star"></i> Score: {{ '%.0f'|format(session.average_score or 0) }}</span>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty-state">
+                <i class="fas fa-yoga"></i>
+                <p>No practice sessions yet. Start your first session!</p>
+            </div>
+        {% endif %}
+    </div>
+    
+    <!-- Saved Routines -->
+    <h2 class="section-title">
+        <i class="fas fa-bookmark"></i>
+        My Routines
+    </h2>
+    
+    <div class="content-card">
+        {% if saved_routines %}
+            {% for routine in saved_routines %}
+                <div class="routine-item">
+                    <h4>{{ routine.routine_name }}</h4>
+                    <div class="session-meta">
+                        <span><i class="fas fa-bullseye"></i> {{ routine.goal }}</span>
+                        <span><i class="fas fa-clock"></i> {{ routine.duration }} min</span>
+                        <span><i class="fas fa-signal"></i> {{ routine.experience_level }}</span>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty-state">
+                <i class="fas fa-plus-circle"></i>
+                <p>No saved routines yet. Create your first personalized routine!</p>
+            </div>
+        {% endif %}
+    </div>
+    
+    <!-- Quick Actions -->
+    <div class="cta-buttons">
+        <a href="{{ url_for('coach') }}" class="btn btn-primary">
+            <i class="fas fa-play"></i>
+            Start Practice
+        </a>
+        <a href="{{ url_for('routines') }}" class="btn btn-secondary">
+            <i class="fas fa-magic"></i>
+            Generate Routine
+        </a>
+    </div>
+</div>
+{% endblock %}

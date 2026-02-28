@@ -1,0 +1,859 @@
+{% extends "base.html" %}
+
+{% block title %}Yoga Coach - VedaVision{% endblock %}
+
+{% block content %}
+<div class="coach-container">
+    <!-- Sidebar -->
+    <aside class="coach-sidebar">
+        <div class="sidebar-header">
+            <h2>Yoga Coach</h2>
+            <p>Select a pose to begin</p>
+        </div>
+        
+        <!-- Pose Selection -->
+        <div class="pose-selection">
+            <h3>Choose Your Pose</h3>
+            <div class="pose-list">
+                <button class="pose-btn" data-pose="warrior2">
+                    <i class="fas fa-user"></i>
+                    <span>Warrior II</span>
+                </button>
+                <button class="pose-btn" data-pose="tree">
+                    <i class="fas fa-user"></i>
+                    <span>Tree Pose</span>
+                </button>
+                <button class="pose-btn" data-pose="mountain">
+                    <i class="fas fa-user"></i>
+                    <span>Mountain Pose</span>
+                </button>
+                <button class="pose-btn" data-pose="triangle">
+                    <i class="fas fa-user"></i>
+                    <span>Triangle Pose</span>
+                </button>
+                <button class="pose-btn" data-pose="downdog">
+                    <i class="fas fa-user"></i>
+                    <span>Downward Dog</span>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Session Stats -->
+        <div class="session-stats">
+            <h3>Current Session</h3>
+            <div class="stat-item">
+                <i class="fas fa-clock"></i>
+                <div>
+                    <span class="stat-label">Duration</span>
+                    <span class="stat-value" id="session-duration">0:00</span>
+                </div>
+            </div>
+            <div class="stat-item">
+                <i class="fas fa-fire"></i>
+                <div>
+                    <span class="stat-label">Current Accuracy</span>
+                    <span class="stat-value" id="current-accuracy">--</span>
+                </div>
+            </div>
+            <div class="stat-item">
+                <i class="fas fa-trophy"></i>
+                <div>
+                    <span class="stat-label">Best Score</span>
+                    <span class="stat-value" id="best-score">--</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Controls -->
+        <div class="coach-controls">
+            <button id="start-btn" class="btn btn-success btn-block">
+                <i class="fas fa-play"></i> Start Session
+            </button>
+            <button id="stop-btn" class="btn btn-danger btn-block" disabled>
+                <i class="fas fa-stop"></i> Stop Session
+            </button>
+            <button id="reset-btn" class="btn btn-secondary btn-block">
+                <i class="fas fa-redo"></i> Reset Stats
+            </button>
+        </div>
+        
+        <!-- Pose Info -->
+        <div class="pose-info" id="pose-info">
+            <h3>Pose Instructions</h3>
+            <p class="info-text">Select a pose to see instructions</p>
+        </div>
+    </aside>
+    
+    <!-- Main Area -->
+    <main class="coach-main">
+        <!-- Video Feed -->
+        <div class="video-container">
+            <div class="video-wrapper">
+                <video id="video-feed" autoplay playsinline></video>
+                <canvas id="overlay-canvas"></canvas>
+                
+                <!-- Status Overlay -->
+                <div class="status-overlay" id="status-overlay">
+                    <div class="status-content">
+                        <i class="fas fa-video"></i>
+                        <h3>Camera Not Active</h3>
+                        <p>Click "Start Session" to begin</p>
+                    </div>
+                </div>
+                
+                <!-- Loading Overlay -->
+                <div class="loading-overlay" id="loading-overlay" style="display: none;">
+                    <div class="spinner"></div>
+                    <p>Initializing AI model...</p>
+                </div>
+            </div>
+            
+            <!-- Accuracy Display -->
+            <div class="accuracy-display" id="accuracy-display">
+                <div class="accuracy-circle">
+                    <svg viewBox="0 0 100 100">
+                        <circle cx="50" cy="50" r="45" class="circle-bg"></circle>
+                        <circle cx="50" cy="50" r="45" class="circle-progress" id="accuracy-circle"></circle>
+                    </svg>
+                    <div class="accuracy-text">
+                        <span class="accuracy-number" id="accuracy-number">0</span>
+                        <span class="accuracy-symbol">%</span>
+                    </div>
+                </div>
+                <p class="accuracy-label">Pose Accuracy</p>
+            </div>
+        </div>
+        
+        <!-- Feedback Panel -->
+        <div class="feedback-panel">
+            <h3>Real-Time Feedback</h3>
+            <div class="feedback-list" id="feedback-list">
+                <div class="feedback-placeholder">
+                    <i class="fas fa-info-circle"></i>
+                    <p>Start a session to receive real-time feedback</p>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.coach-container {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    height: calc(100vh - 80px);
+    background: var(--light);
+}
+
+.coach-sidebar {
+    background: var(--white);
+    padding: 30px 20px;
+    overflow-y: auto;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
+}
+
+.sidebar-header {
+    margin-bottom: 30px;
+}
+
+.sidebar-header h2 {
+    margin-bottom: 5px;
+}
+
+.sidebar-header p {
+    color: var(--gray);
+    font-size: 0.9rem;
+}
+
+.pose-selection {
+    margin-bottom: 30px;
+}
+
+.pose-selection h3 {
+    font-size: 1rem;
+    margin-bottom: 15px;
+    color: var(--gray);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.pose-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.pose-btn {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 15px 20px;
+    background: var(--light);
+    border: 2px solid transparent;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: var(--transition);
+    font-size: 1rem;
+}
+
+.pose-btn:hover {
+    background: var(--white);
+    border-color: var(--primary);
+    transform: translateX(5px);
+}
+
+.pose-btn.active {
+    background: var(--gradient-primary);
+    color: var(--white);
+    border-color: var(--primary);
+}
+
+.pose-btn i {
+    font-size: 1.5rem;
+}
+
+.session-stats {
+    margin-bottom: 30px;
+    padding: 20px;
+    background: var(--light);
+    border-radius: 15px;
+}
+
+.session-stats h3 {
+    font-size: 1rem;
+    margin-bottom: 15px;
+    color: var(--gray);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.stat-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.stat-item:last-child {
+    border-bottom: none;
+}
+
+.stat-item i {
+    font-size: 1.5rem;
+    color: var(--primary);
+}
+
+.stat-item div {
+    display: flex;
+    flex-direction: column;
+}
+
+.stat-label {
+    font-size: 0.85rem;
+    color: var(--gray);
+}
+
+.stat-value {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: var(--dark);
+}
+
+.coach-controls {
+    margin-bottom: 30px;
+}
+
+.btn-block {
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.pose-info {
+    padding: 20px;
+    background: var(--light);
+    border-radius: 15px;
+}
+
+.pose-info h3 {
+    font-size: 1rem;
+    margin-bottom: 15px;
+}
+
+.info-text {
+    color: var(--gray);
+    line-height: 1.6;
+}
+
+.coach-main {
+    padding: 30px;
+    overflow-y: auto;
+}
+
+.video-container {
+    margin-bottom: 30px;
+    display: grid;
+    grid-template-columns: 1fr 250px;
+    gap: 30px;
+}
+
+.video-wrapper {
+    position: relative;
+    background: var(--dark);
+    border-radius: 20px;
+    overflow: hidden;
+    aspect-ratio: 16 / 9;
+}
+
+#video-feed {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+#overlay-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.status-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--white);
+    text-align: center;
+}
+
+.status-content i {
+    font-size: 4rem;
+    margin-bottom: 20px;
+    opacity: 0.5;
+}
+
+.loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: var(--white);
+}
+
+.spinner {
+    width: 60px;
+    height: 60px;
+    border: 4px solid rgba(255, 255, 255, 0.2);
+    border-top-color: var(--white);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.accuracy-display {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: var(--white);
+    border-radius: 20px;
+    padding: 30px;
+}
+
+.accuracy-circle {
+    position: relative;
+    width: 150px;
+    height: 150px;
+}
+
+.accuracy-circle svg {
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg);
+}
+
+.circle-bg {
+    fill: none;
+    stroke: var(--light);
+    stroke-width: 8;
+}
+
+.circle-progress {
+    fill: none;
+    stroke: url(#gradient);
+    stroke-width: 8;
+    stroke-linecap: round;
+    stroke-dasharray: 283;
+    stroke-dashoffset: 283;
+    transition: stroke-dashoffset 0.5s ease;
+}
+
+.accuracy-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
+
+.accuracy-number {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: var(--dark);
+}
+
+.accuracy-symbol {
+    font-size: 1.5rem;
+    color: var(--gray);
+}
+
+.accuracy-label {
+    margin-top: 20px;
+    color: var(--gray);
+    font-size: 0.9rem;
+}
+
+.feedback-panel {
+    background: var(--white);
+    border-radius: 20px;
+    padding: 30px;
+}
+
+.feedback-panel h3 {
+    margin-bottom: 20px;
+}
+
+.feedback-list {
+    min-height: 200px;
+}
+
+.feedback-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 200px;
+    color: var(--gray);
+    text-align: center;
+}
+
+.feedback-placeholder i {
+    font-size: 3rem;
+    margin-bottom: 15px;
+    opacity: 0.3;
+}
+
+.feedback-item {
+    display: flex;
+    align-items: start;
+    gap: 15px;
+    padding: 15px;
+    margin-bottom: 10px;
+    background: var(--light);
+    border-radius: 12px;
+    border-left: 4px solid var(--primary);
+}
+
+.feedback-item.error {
+    border-left-color: var(--danger);
+}
+
+.feedback-item.success {
+    border-left-color: var(--success);
+}
+
+.feedback-item i {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+}
+
+.feedback-item.error i {
+    color: var(--danger);
+}
+
+.feedback-item.success i {
+    color: var(--success);
+}
+
+@media (max-width: 1024px) {
+    .coach-container {
+        grid-template-columns: 1fr;
+        height: auto;
+    }
+    
+    .coach-sidebar {
+        order: 2;
+    }
+    
+    .video-container {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Coach Application State
+let sessionActive = false;
+let selectedPose = null;
+let sessionStartTime = null;
+let durationInterval = null;
+let currentAccuracy = 0;
+let bestScore = 0;
+
+// Pose Information
+const poseInfo = {
+    warrior2: {
+        name: "Warrior II (Virabhadrasana II)",
+        instructions: "Stand with feet wide apart. Turn right foot out 90°. Bend right knee to 90°. Extend arms parallel to floor. Gaze over right hand. Keep torso upright and centered.",
+        benefits: "Strengthens legs, opens hips, improves focus and stamina."
+    },
+    tree: {
+        name: "Tree Pose (Vrksasana)",
+        instructions: "Stand on left leg. Place right foot on inner left thigh. Bring hands to prayer position at chest. Balance and breathe. Keep standing leg straight.",
+        benefits: "Improves balance, strengthens ankles and legs, calms the mind."
+    },
+    mountain: {
+        name: "Mountain Pose (Tadasana)",
+        instructions: "Stand with feet together. Distribute weight evenly. Align spine. Roll shoulders back. Arms by sides, palms forward. Engage core and breathe deeply.",
+        benefits: "Improves posture, reduces fatigue, increases body awareness."
+    },
+    triangle: {
+        name: "Triangle Pose (Trikonasana)",
+        instructions: "Stand wide. Turn right foot out. Extend arms. Reach right hand toward floor. Left arm extends up. Keep bothlegs straight. Gaze at top hand.",
+        benefits: "Stretches legs and spine, improves digestion and balance."
+    },
+    downdog: {
+        name: "Downward Dog (Adho Mukha Svanasana)",
+        instructions: "Start on hands and knees. Lift hips up and back. Form an inverted V. Press hands into floor. Straighten legs as much as comfortable. Relax neck.",
+        benefits: "Stretches entire body, energizes, calms the brain, relieves stress."
+    }
+};
+
+// Initialize
+document.addEventListener('DOMContentLoaded', () => {
+    setupPoseSelection();
+    setupControls();
+});
+
+// Pose Selection
+function setupPoseSelection() {
+    const poseBtns = document.querySelectorAll('.pose-btn');
+    poseBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            // Update active state
+            poseBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            
+            // Set selected pose
+            selectedPose = btn.dataset.pose;
+            
+            // Update pose info
+            updatePoseInfo();
+        });
+    });
+}
+
+// Update Pose Info
+function updatePoseInfo() {
+    if (!selectedPose) return;
+    
+    const info = poseInfo[selectedPose];
+    const poseInfoEl = document.getElementById('pose-info');
+    
+    poseInfoEl.innerHTML = `
+        <h3>${info.name}</h3>
+        <h4 style="margin-top: 15px; margin-bottom: 10px; font-size: 0.9rem; color: var(--gray);">INSTRUCTIONS</h4>
+        <p class="info-text">${info.instructions}</p>
+        <h4 style="margin-top: 15px; margin-bottom: 10px; font-size: 0.9rem; color: var(--gray);">BENEFITS</h4>
+        <p class="info-text">${info.benefits}</p>
+    `;
+}
+
+// Setup Controls
+function setupControls() {
+    const startBtn = document.getElementById('start-btn');
+    const stopBtn = document.getElementById('stop-btn');
+    const resetBtn = document.getElementById('reset-btn');
+    
+    startBtn.addEventListener('click', startSession);
+    stopBtn.addEventListener('click', stopSession);
+    resetBtn.addEventListener('click', resetStats);
+}
+
+// Start Session
+async function startSession() {
+    if (!selectedPose) {
+        showToast('Please select a pose first', 'warning');
+        return;
+    }
+    
+    try {
+        // Show loading
+        document.getElementById('loading-overlay').style.display = 'flex';
+        
+        // Request camera access
+        const stream = await navigator.mediaDevices.getUserMedia({ 
+            video: { width: 1280, height: 720 } 
+        });
+        
+        const video = document.getElementById('video-feed');
+        video.srcObject = stream;
+        
+        // Hide status overlay
+        document.getElementById('status-overlay').style.display = 'none';
+        document.getElementById('loading-overlay').style.display = 'none';
+        
+        // Update UI
+        document.getElementById('start-btn').disabled = true;
+        document.getElementById('stop-btn').disabled = false;
+        
+        // Start session
+        sessionActive = true;
+        sessionStartTime = Date.now();
+        startDurationTimer();
+        
+        // API call to start backend session
+        await startYogaSession(selectedPose);
+        
+        showToast('Session started successfully!', 'success');
+        
+        // Start processing frames (in real implementation)
+        startFrameProcessing();
+        
+    } catch (error) {
+        console.error('Error starting session:', error);
+        showToast('Failed to access camera', 'error');
+        document.getElementById('loading-overlay').style.display = 'none';
+    }
+}
+
+// Stop Session
+async function stopSession() {
+    // Stop frame processing
+    stopFrameProcessing();
+    
+    // Stop camera
+    const video = document.getElementById('video-feed');
+    const stream = video.srcObject;
+    if (stream) {
+        stream.getTracks().forEach(track => track.stop());
+        video.srcObject = null;
+    }
+    
+    // Update UI
+    document.getElementById('status-overlay').style.display = 'flex';
+    document.getElementById('start-btn').disabled = false;
+    document.getElementById('stop-btn').disabled = true;
+    
+    // Stop session
+    sessionActive = false;
+    stopDurationTimer();
+    
+    // Notify backend
+    try {
+        await fetch('/api/stop-session', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'}
+        });
+    } catch (error) {
+        console.error('Error stopping session:', error);
+    }
+    
+    showToast('Session ended', 'info');
+}
+
+// Reset Stats
+function resetStats() {
+    currentAccuracy = 0;
+    bestScore = 0;
+    updateAccuracyDisplay(0);
+    document.getElementById('best-score').textContent = '--';
+    document.getElementById('current-accuracy').textContent = '--';
+    
+    showToast('Stats reset', 'info');
+}
+
+// Duration Timer
+function startDurationTimer() {
+    durationInterval = setInterval(() => {
+        if (!sessionStartTime) return;
+        
+        const elapsed = Date.now() - sessionStartTime;
+        const minutes = Math.floor(elapsed / 60000);
+        const seconds = Math.floor((elapsed % 60000) / 1000);
+        
+        document.getElementById('session-duration').textContent = 
+            `${minutes}:${seconds.toString().padStart(2, '0')}`;
+    }, 1000);
+}
+
+function stopDurationTimer() {
+    if (durationInterval) {
+        clearInterval(durationInterval);
+        durationInterval = null;
+    }
+}
+
+// Update Accuracy Display
+function updateAccuracyDisplay(accuracy) {
+    currentAccuracy = accuracy;
+    
+    // Update number
+    document.getElementById('accuracy-number').textContent = Math.round(accuracy);
+    
+    // Update circle
+    const circle = document.getElementById('accuracy-circle');
+    const circumference = 283;
+    const offset = circumference - (accuracy / 100) * circumference;
+    circle.style.strokeDashoffset = offset;
+    
+    // Update stats
+    document.getElementById('current-accuracy').textContent = Math.round(accuracy) + '%';
+    
+    // Update best score
+    if (accuracy > bestScore) {
+        bestScore = accuracy;
+        document.getElementById('best-score').textContent = Math.round(bestScore) + '%';
+    }
+}
+
+// Frame Processing (Real Implementation)
+let processingInterval = null;
+
+function startFrameProcessing() {
+    const video = document.getElementById('video-feed');
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    
+    // Process frames at 10 FPS (to reduce load)
+    processingInterval = setInterval(async () => {
+        if (!sessionActive || !video.srcObject) return;
+        
+        try {
+            // Capture frame from video
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            ctx.drawImage(video, 0, 0);
+            
+            // Convert to blob
+            canvas.toBlob(async (blob) => {
+                if (!blob) return;
+                
+                // Send to backend
+                const formData = new FormData();
+                formData.append('frame', blob, 'frame.jpg');
+                
+                try {
+                    const response = await fetch('/api/process-frame', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        
+                        // Update accuracy display
+                        if (data.score) {
+                            updateAccuracyDisplay(data.score);
+                        }
+                        
+                        // Update feedback
+                        if (data.feedback && data.feedback.length > 0) {
+                            // Clear old feedback occasionally
+                            if (Math.random() > 0.8) {
+                                document.getElementById('feedback-list').innerHTML = '';
+                            }
+                            
+                            // Add new feedback
+                            data.feedback.forEach((msg, index) => {
+                                if (index < 2) {  // Only show top 2 messages
+                                    const type = msg.includes('✓') ? 'success' : 
+                                               msg.includes('⚠') ? 'error' : 'info';
+                                    addFeedbackMessage(type, msg);
+                                }
+                            });
+                        }
+                        
+                        // Update best score
+                        if (data.best_score) {
+                            bestScore = data.best_score;
+                            document.getElementById('best-score').textContent = Math.round(bestScore) + '%';
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error processing frame:', error);
+                }
+            }, 'image/jpeg', 0.8);
+            
+        } catch (error) {
+            console.error('Error capturing frame:', error);
+        }
+    }, 100); // Process at ~10 FPS
+}
+
+function stopFrameProcessing() {
+    if (processingInterval) {
+        clearInterval(processingInterval);
+        processingInterval = null;
+    }
+}
+
+// Add Feedback Message
+function addFeedbackMessage(type, message) {
+    const feedbackList = document.getElementById('feedback-list');
+    
+    // Remove placeholder
+    const placeholder = feedbackList.querySelector('.feedback-placeholder');
+    if (placeholder) placeholder.remove();
+    
+    // Create feedback item
+    const item = document.createElement('div');
+    item.className = `feedback-item ${type}`;
+    item.innerHTML = `
+        <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i>
+        <p>${message}</p>
+    `;
+    
+    feedbackList.insertBefore(item, feedbackList.firstChild);
+    
+    // Limit to 5 messages
+    while (feedbackList.children.length > 5) {
+        feedbackList.removeChild(feedbackList.lastChild);
+    }
+}
+
+// Add SVG gradient definition
+document.addEventListener('DOMContentLoaded', () => {
+    const svg = document.querySelector('.accuracy-circle svg');
+    const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+    const gradient = document.createElementNS('http://www.w3.org/2000/svg', 'linearGradient');
+    gradient.setAttribute('id', 'gradient');
+    gradient.innerHTML = `
+        <stop offset="0%" stop-color="#667eea" />
+        <stop offset="100%" stop-color="#764ba2" />
+    `;
+    defs.appendChild(gradient);
+    svg.insertBefore(defs, svg.firstChild);
+});
+</script>
+{% endblock %}
