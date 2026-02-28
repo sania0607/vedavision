@@ -89,7 +89,7 @@
         <!-- Video Feed -->
         <div class="video-container">
             <div class="video-wrapper">
-                <video id="video-feed" autoplay playsinline></video>
+                <video id="video-feed" autoplay playsinline muted></video>
                 <canvas id="overlay-canvas"></canvas>
                 
                 <!-- Status Overlay -->
@@ -97,14 +97,20 @@
                     <div class="status-content">
                         <i class="fas fa-video"></i>
                         <h3>Camera Not Active</h3>
-                        <p>Click "Start Session" to begin</p>
+                        <p>1. Select a pose from the left sidebar</p>
+                        <p>2. Click "Start Session" button</p>
+                        <p>3. Allow camera access when prompted</p>
+                        <p style="font-size: 0.85rem; color: #999; margin-top: 10px;">
+                            💡 Make sure your camera is connected and not being used by another app
+                        </p>
                     </div>
                 </div>
                 
                 <!-- Loading Overlay -->
                 <div class="loading-overlay" id="loading-overlay" style="display: none;">
                     <div class="spinner"></div>
-                    <p>Initializing AI model...</p>
+                    <p>Initializing camera...</p>
+                    <p style="font-size: 0.85rem; margin-top: 10px;">Please allow camera access</p>
                 </div>
             </div>
             
@@ -285,6 +291,34 @@
 .info-text {
     color: var(--gray);
     line-height: 1.6;
+}
+
+.pose-reference-image {
+    margin: 15px 0;
+    text-align: center;
+}
+
+.pose-reference-image img {
+    width: 100%;
+    max-width: 250px;
+    height: auto;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    border: 3px solid var(--primary);
+    transition: transform 0.3s ease;
+}
+
+.pose-reference-image img:hover {
+    transform: scale(1.05);
+}
+
+.reference-label {
+    margin-top: 8px;
+    font-size: 0.85rem;
+    color: var(--primary);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 .coach-main {
@@ -525,27 +559,32 @@ const poseInfo = {
     warrior2: {
         name: "Warrior II (Virabhadrasana II)",
         instructions: "Stand with feet wide apart. Turn right foot out 90°. Bend right knee to 90°. Extend arms parallel to floor. Gaze over right hand. Keep torso upright and centered.",
-        benefits: "Strengthens legs, opens hips, improves focus and stamina."
+        benefits: "Strengthens legs, opens hips, improves focus and stamina.",
+        image: "/static/images/warrior2_pose.jpg"
     },
     tree: {
         name: "Tree Pose (Vrksasana)",
         instructions: "Stand on left leg. Place right foot on inner left thigh. Bring hands to prayer position at chest. Balance and breathe. Keep standing leg straight.",
-        benefits: "Improves balance, strengthens ankles and legs, calms the mind."
+        benefits: "Improves balance, strengthens ankles and legs, calms the mind.",
+        image: "/static/images/tree_pose.jpg"
     },
     mountain: {
         name: "Mountain Pose (Tadasana)",
         instructions: "Stand with feet together. Distribute weight evenly. Align spine. Roll shoulders back. Arms by sides, palms forward. Engage core and breathe deeply.",
-        benefits: "Improves posture, reduces fatigue, increases body awareness."
+        benefits: "Improves posture, reduces fatigue, increases body awareness.",
+        image: "/static/images/mountain_pose.png"
     },
     triangle: {
         name: "Triangle Pose (Trikonasana)",
         instructions: "Stand wide. Turn right foot out. Extend arms. Reach right hand toward floor. Left arm extends up. Keep bothlegs straight. Gaze at top hand.",
-        benefits: "Stretches legs and spine, improves digestion and balance."
+        benefits: "Stretches legs and spine, improves digestion and balance.",
+        image: "/static/images/triangle_pose.jpg"
     },
     downdog: {
         name: "Downward Dog (Adho Mukha Svanasana)",
         instructions: "Start on hands and knees. Lift hips up and back. Form an inverted V. Press hands into floor. Straighten legs as much as comfortable. Relax neck.",
-        benefits: "Stretches entire body, energizes, calms the brain, relieves stress."
+        benefits: "Stretches entire body, energizes, calms the brain, relieves stress.",
+        image: null
     }
 };
 
@@ -580,8 +619,16 @@ function updatePoseInfo() {
     const info = poseInfo[selectedPose];
     const poseInfoEl = document.getElementById('pose-info');
     
+    const imageHtml = info.image ? `
+        <div class="pose-reference-image">
+            <img src="${info.image}" alt="${info.name} reference" />
+            <p class="reference-label">Reference Image</p>
+        </div>
+    ` : '';
+    
     poseInfoEl.innerHTML = `
         <h3>${info.name}</h3>
+        ${imageHtml}
         <h4 style="margin-top: 15px; margin-bottom: 10px; font-size: 0.9rem; color: var(--gray);">INSTRUCTIONS</h4>
         <p class="info-text">${info.instructions}</p>
         <h4 style="margin-top: 15px; margin-bottom: 10px; font-size: 0.9rem; color: var(--gray);">BENEFITS</h4>
@@ -611,13 +658,35 @@ async function startSession() {
         // Show loading
         document.getElementById('loading-overlay').style.display = 'flex';
         
-        // Request camera access
-        const stream = await navigator.mediaDevices.getUserMedia({ 
-            video: { width: 1280, height: 720 } 
-        });
+        // Check if getUserMedia is supported
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+            throw new Error('Camera access not supported in this browser');
+        }
+        
+        // Request camera access with fallback options
+        const constraints = {
+            video: {
+                width: { ideal: 1280 },
+                height: { ideal: 720 },
+                facingMode: 'user'
+            }
+        };
+        
+        const stream = await navigator.mediaDevices.getUserMedia(constraints);
         
         const video = document.getElementById('video-feed');
         video.srcObject = stream;
+        
+        // Wait for video to be ready and start playing
+        await new Promise((resolve, reject) => {
+            video.onloadedmetadata = () => {
+                video.play()
+                    .then(resolve)
+                    .catch(reject);
+            };
+            // Timeout after 5 seconds
+            setTimeout(() => reject(new Error('Video loading timeout')), 5000);
+        });
         
         // Hide status overlay
         document.getElementById('status-overlay').style.display = 'none';
@@ -642,8 +711,21 @@ async function startSession() {
         
     } catch (error) {
         console.error('Error starting session:', error);
-        showToast('Failed to access camera', 'error');
+        let errorMessage = 'Failed to access camera';
+        
+        if (error.name === 'NotAllowedError') {
+            errorMessage = 'Camera permission denied. Please allow camera access.';
+        } else if (error.name === 'NotFoundError') {
+            errorMessage = 'No camera found. Please connect a camera.';
+        } else if (error.name === 'NotReadableError') {
+            errorMessage = 'Camera is already in use by another application.';
+        } else if (error.message) {
+            errorMessage = error.message;
+        }
+        
+        showToast(errorMessage, 'error');
         document.getElementById('loading-overlay').style.display = 'none';
+        document.getElementById('status-overlay').style.display = 'flex';
     }
 }
 

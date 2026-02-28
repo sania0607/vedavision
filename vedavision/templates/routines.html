@@ -475,6 +475,10 @@
 </section>
 
 <script>
+// Store current routine data for saving
+let currentRoutine = null;
+let currentFormData = null;
+
 document.getElementById('routine-form').addEventListener('submit', async function(e) {
     e.preventDefault();
     
@@ -486,6 +490,14 @@ document.getElementById('routine-form').addEventListener('submit', async functio
     // Get focus areas
     const focusCheckboxes = document.querySelectorAll('input[name="focus"]:checked');
     const focusAreas = Array.from(focusCheckboxes).map(cb => cb.value);
+    
+    // Store form data for saving later
+    currentFormData = {
+        goal: goal,
+        level: level,
+        duration: duration,
+        focus_areas: focusAreas
+    };
     
     // Show loading
     document.getElementById('preview-placeholder').style.display = 'none';
@@ -522,6 +534,7 @@ document.getElementById('routine-form').addEventListener('submit', async functio
         }
         
         if (data.success && data.routine) {
+            currentRoutine = data.routine; // Store for saving later
             displayRoutine(data.routine);
         }
         
@@ -631,8 +644,110 @@ function displayRoutine(routine) {
     contentDiv.classList.add('active');
 }
 
-function saveRoutine() {
-    alert('Routine saved! (Feature coming soon - will save to your account)');
+async function saveRoutine() {
+    if (!currentRoutine || !currentFormData) {
+        alert('No routine to save. Please generate a routine first.');
+        return;
+    }
+    
+    // Disable save button
+    const saveBtn = document.querySelector('.btn-save');
+    const originalHTML = saveBtn.innerHTML;
+    saveBtn.disabled = true;
+    saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+    
+    try {
+        const response = await fetch('/api/save-routine', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                routine_name: currentRoutine.routine_name || 'My Yoga Routine',
+                routine_data: currentRoutine,
+                goal: currentFormData.goal,
+                duration: currentFormData.duration,
+                experience_level: currentFormData.level
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            saveBtn.innerHTML = '<i class="fas fa-check"></i> Saved!';
+            saveBtn.style.background = '#28a745';
+            
+            // Show success toast
+            showToast('Routine saved successfully! View it in your dashboard.', 'success');
+            
+            // Reset button after 3 seconds
+            setTimeout(() => {
+                saveBtn.innerHTML = originalHTML;
+                saveBtn.disabled = false;
+                saveBtn.style.background = '';
+            }, 3000);
+        } else {
+            throw new Error(data.error || 'Failed to save routine');
+        }
+        
+    } catch (error) {
+        console.error('Error saving routine:', error);
+        saveBtn.innerHTML = originalHTML;
+        saveBtn.disabled = false;
+        showToast('Failed to save routine: ' + error.message, 'error');
+    }
 }
+
+// Toast notification function
+function showToast(message, type = 'info') {
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${type}`;
+    toast.textContent = message;
+    toast.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 15px 25px;
+        background: ${type === 'success' ? '#28a745' : type === 'error' ? '#dc3545' : '#667eea'};
+        color: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        z-index: 10000;
+        animation: slideInRight 0.3s ease-out;
+        max-width: 400px;
+    `;
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+        toast.style.animation = 'slideOutRight 0.3s ease-out';
+        setTimeout(() => toast.remove(), 300);
+    }, 4000);
+}
+
+// Add CSS animations
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes slideInRight {
+        from {
+            transform: translateX(400px);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+    @keyframes slideOutRight {
+        from {
+            transform: translateX(0);
+            opacity: 1;
+        }
+        to {
+            transform: translateX(400px);
+            opacity: 0;
+        }
+    }
+`;
+document.head.appendChild(style);
 </script>
 {% endblock %}
